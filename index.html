@@ -161,7 +161,7 @@
   var POPULAR_GROUPS = {
     "Assembly": ["General Furniture Assembly","Desk Assembly","Patio Furniture Disassembly"],
     "Mounting": ["General Mounting","TV Mounting","Install Blinds & Window Treatments","Outdoor Light Installation","Other Mounting"],
-    "Moving": ["Help Moving","Flat-Rate Move","Heavy Lifting & Loading","Trash & Furniture Removal","Junk Haul Away","Patio Furniture Removal & Storage","Yard Waste Haul Away"],
+    "Moving": ["Help Moving","Flat-Rate Move","Heavy Lifting & Loading","Trash & Furniture Removal","Junk Haul Away","Patio Furniture Removal & Storage","Yard Waste Haul Away","Ride"],
     "Home Repairs": ["Door, Cabinet, & Furniture Repair","Wall Repair","Sealing & Caulking","Window & Blinds Repair","Electrical Help","Plumbing Help","Light Carpentry"],
     "Outdoor Help": ["Gutter & Roof Cleaning","Leaf Raking & Removal"]
   };
@@ -183,7 +183,7 @@
   // own categories, shown as the original tiles).
   var jobtabs = document.getElementById('jobtabs');
   var jobGroups = document.getElementById('jobGroups');
-  var groupNames = Object.keys(POPULAR_GROUPS).concat(['All services']);
+  var groupNames = Object.keys(POPULAR_GROUPS).concat(['Client Solutions']);
   var groupDivs = {};
   groupNames.forEach(function (g, gi) {
     var tab = document.createElement('button'); tab.className = 'jobtab' + (gi === 0 ? ' active' : ''); tab.type = 'button'; tab.textContent = g;
@@ -208,7 +208,7 @@
     var tabs = jobtabs.children;
     for (var i = 0; i < tabs.length; i += 1) { tabs[i].className = 'jobtab' + (tabs[i].textContent === g ? ' active' : ''); }
     groupNames.forEach(function (n) { groupDivs[n].style.display = n === g ? 'flex' : 'none'; });
-    tiles.style.display = g === 'All services' ? 'grid' : 'none';
+    tiles.style.display = g === 'Client Solutions' ? 'grid' : 'none';
   }
   function goHome(e) {
     // Already on the homepage: a plain link to index.html can reload and
