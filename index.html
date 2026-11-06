@@ -21,6 +21,7 @@
   .hero p.lede { font-size:19px; color:#55555e; max-width:640px; margin:0 auto 26px; line-height:1.5; }
   .postbox { display:flex; gap:10px; max-width:620px; margin:0 auto; flex-wrap:wrap; justify-content:center; }
   .postbox select { flex:1 1 260px; padding:13px 14px; font-size:16px; border:2px solid #f0d9b5; border-radius:12px; background:#fff; color:#26262b; }
+  #heroCategory option.custom-opt { font-weight:800; font-size:17.5px; }
   .badges { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:22px; }
   .badge { background:#fff4e0; color:#92600a; border:1px solid #f3ddba; padding:6px 12px; border-radius:999px; font-size:13.5px; font-weight:600; }
   h2 { font-size:26px; margin:44px 0 6px; }
@@ -29,6 +30,12 @@
   .tile { background:#fff; border:1.5px solid #f3e3cd; border-radius:14px; padding:16px 14px; font-weight:700; font-size:15.5px; cursor:pointer; text-align:left; color:#26262b; }
   .tile:hover { border-color:#F97316; background:#fff8ec; }
   .tile small { display:block; font-weight:500; color:#8a8a93; font-size:12.5px; margin-top:3px; }
+  .jobtabs { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 16px; }
+  .jobtab { border:1.5px solid #f3e3cd; background:#fff; color:#26262b; border-radius:999px; padding:9px 16px; font-weight:700; font-size:14.5px; cursor:pointer; }
+  .jobtab.active { background:linear-gradient(135deg,#FFB020,#F97316); border-color:#F97316; color:#fff; }
+  .pills { display:flex; flex-wrap:wrap; gap:9px; }
+  .pill { border:1.5px solid #e6e0d5; background:#fff; color:#26262b; border-radius:999px; padding:10px 16px; font-weight:600; font-size:14.5px; cursor:pointer; text-align:left; }
+  .pill:hover { border-color:#F97316; background:#fff8ec; }
   .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; }
   .step { background:#fff; border:1px solid #f3e3cd; border-radius:14px; padding:16px; line-height:1.5; font-size:15px; }
   .step .n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#FFB020,#F97316); color:#fff; font-weight:800; align-items:center; justify-content:center; margin-bottom:8px; }
@@ -77,9 +84,11 @@
     </div>
   </section>
 
-  <h2 id="categories">Popular jobs</h2>
+  <h2 id="categories">Popular request</h2>
   <p class="sub">Tap a job to get started — you'll be first to know when the app opens.</p>
-  <div class="tiles" id="tiles"></div>
+  <div class="jobtabs" id="jobtabs"></div>
+  <div id="jobGroups"></div>
+  <div class="tiles" id="tiles" style="display:none;"></div>
 
   <h2 id="how">How it works</h2>
   <div class="steps">
@@ -147,23 +156,66 @@
   <a href="mailto:support@duntidae.com">support@duntidae.com</a> · <a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></p>
 </footer>
 <script>
-  var CATEGORIES = ["Custom Request","Emergency Locksmith","Emergency Plumbing","Errands & Shopping","Furniture Assembly","General Handyman","Grocery Drop-off","House Cleaning","Laundry Pick & Drop","Moving Help","Painting","Pet Care","Snow Removal","TV Mounting","Yard Work & Lawn"];
+  var APP_CATEGORIES = ["Custom Request","Emergency Locksmith","Emergency Plumbing","Errands & Shopping","Furniture Assembly","General Handyman","Grocery Drop-off","House Cleaning","Laundry Pick & Drop","Moving Help","Painting","Pet Care","Snow Removal","TV Mounting","Yard Work & Lawn"];
+  // Popular jobs, grouped the way posters browse them (Candella, 2026-11-06).
+  var POPULAR_GROUPS = {
+    "Assembly": ["General Furniture Assembly","Desk Assembly","Patio Furniture Disassembly"],
+    "Mounting": ["General Mounting","TV Mounting","Install Blinds & Window Treatments","Outdoor Light Installation","Other Mounting"],
+    "Moving": ["Help Moving","Flat-Rate Move","Heavy Lifting & Loading","Trash & Furniture Removal","Junk Haul Away","Patio Furniture Removal & Storage","Yard Waste Haul Away"],
+    "Home Repairs": ["Door, Cabinet, & Furniture Repair","Wall Repair","Sealing & Caulking","Window & Blinds Repair","Electrical Help","Plumbing Help","Light Carpentry"],
+    "Outdoor Help": ["Gutter & Roof Cleaning","Leaf Raking & Removal"]
+  };
   var chosen = { category: "", role: "poster" };
   var sel = document.getElementById('heroCategory');
   var tiles = document.getElementById('tiles');
-  CATEGORIES.forEach(function (c) {
+  // Post-a-Job dropdown: Custom Request first (like the app), then every
+  // service — app categories + popular jobs — in alphabetical order.
+  var allJobs = APP_CATEGORIES.filter(function (c) { return c !== 'Custom Request'; });
+  Object.keys(POPULAR_GROUPS).forEach(function (g) {
+    POPULAR_GROUPS[g].forEach(function (j) { if (allJobs.indexOf(j) === -1) allJobs.push(j); });
+  });
+  allJobs.sort();
+  var customOpt = document.createElement('option'); customOpt.value = 'Custom Request'; customOpt.textContent = 'Custom Request'; customOpt.className = 'custom-opt'; sel.appendChild(customOpt);
+  allJobs.forEach(function (c) {
     var o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o);
+  });
+  // Popular-jobs tabs: one group at a time, plus All services (the app's
+  // own categories, shown as the original tiles).
+  var jobtabs = document.getElementById('jobtabs');
+  var jobGroups = document.getElementById('jobGroups');
+  var groupNames = Object.keys(POPULAR_GROUPS).concat(['All services']);
+  var groupDivs = {};
+  groupNames.forEach(function (g, gi) {
+    var tab = document.createElement('button'); tab.className = 'jobtab' + (gi === 0 ? ' active' : ''); tab.type = 'button'; tab.textContent = g;
+    tab.onclick = function () { showGroup(g); };
+    jobtabs.appendChild(tab);
+    var div = document.createElement('div'); div.className = 'pills'; div.style.display = gi === 0 ? 'flex' : 'none';
+    (POPULAR_GROUPS[g] || []).forEach(function (j) {
+      var p = document.createElement('button'); p.className = 'pill'; p.type = 'button'; p.textContent = j;
+      p.onclick = function () { pickCategory(j); };
+      div.appendChild(p);
+    });
+    jobGroups.appendChild(div);
+    groupDivs[g] = div;
+  });
+  APP_CATEGORIES.forEach(function (c) {
     var b = document.createElement('button'); b.className = 'tile'; b.type = 'button';
     b.innerHTML = c + '<small>Same-day · in the app</small>';
     b.onclick = function () { pickCategory(c); };
     tiles.appendChild(b);
   });
+  function showGroup(g) {
+    var tabs = jobtabs.children;
+    for (var i = 0; i < tabs.length; i += 1) { tabs[i].className = 'jobtab' + (tabs[i].textContent === g ? ' active' : ''); }
+    groupNames.forEach(function (n) { groupDivs[n].style.display = n === g ? 'flex' : 'none'; });
+    tiles.style.display = g === 'All services' ? 'grid' : 'none';
+  }
   function goHome(e) {
     // Already on the homepage: a plain link to index.html can reload and
     // land back at the same scroll spot, looking like nothing happened.
     // Reset the funnel state and scroll to the top instead.
     chosen = { category: "", role: "poster" };
-    sel.value = CATEGORIES[0];
+    sel.value = '';
     refresh();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (e) e.preventDefault();
