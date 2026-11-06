@@ -1,114 +1,190 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Duntidae — Same-day help, done today</title>
-<meta name="description" content="Duntidae is a same-day gig marketplace. Post a job, a verified technician accepts it, and payment is held in escrow until the work is signed off.">
+<title>Duntidae — Same-day gig marketplace</title>
+<meta name="description" content="Duntidae is a same-day gig marketplace. Post a job, a verified technician accepts it, and payment is held securely until the work is signed off.">
 <link rel="icon" href="icon.png">
 <style>
   * { box-sizing: border-box; }
   body { margin:0; font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#26262b; background:#fffdf9; }
-  header.site { display:flex; align-items:center; gap:12px; padding:16px 24px; background:#fff; }
-  header.site img.logo { width:44px; height:44px; border-radius:10px; }
-  header.site .brand { font-size:22px; font-weight:800; }
-  header.site nav { margin-left:auto; display:flex; gap:18px; }
-  header.site nav a { color:#b25e09; text-decoration:none; font-weight:600; font-size:15px; }
-  .hero { background:linear-gradient(135deg,#FFB020,#F97316); color:#fff; text-align:center; padding:56px 22px 44px; }
-  .hero h1 { font-size:40px; margin:0 0 12px; line-height:1.15; }
-  .hero p { font-size:18px; margin:0 auto 8px; max-width:620px; line-height:1.55; }
-  .strip { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:26px; }
-  .badge { background:rgba(255,255,255,.94); color:#9a5205; font-weight:700; font-size:14px; padding:9px 16px; border-radius:999px; }
-  main { max-width:880px; margin:0 auto; padding:34px 22px 10px; }
-  h2 { font-size:24px; margin:30px 0 12px; }
-  p, li { line-height:1.65; font-size:16px; }
-  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:8px; }
-  .step { background:#fff; border:1px solid #f3e3cd; border-radius:14px; padding:16px; }
-  .step .n { display:inline-block; background:linear-gradient(135deg,#FFB020,#F97316); color:#fff; font-weight:800; width:28px; height:28px; border-radius:50%; text-align:center; line-height:28px; margin-bottom:8px; }
+  header.site { display:flex; align-items:center; gap:12px; padding:14px 24px; border-bottom:1px solid #f3e3cd; background:#fff; position:sticky; top:0; z-index:10; }
+  header.site img.logo { width:40px; height:40px; border-radius:10px; }
+  header.site .brand { font-size:21px; font-weight:800; letter-spacing:.2px; }
+  header.site nav { margin-left:auto; display:flex; gap:18px; align-items:center; }
+  header.site nav a { color:#b25e09; text-decoration:none; font-weight:600; font-size:14.5px; }
+  .btn { display:inline-block; background:linear-gradient(135deg,#FFB020,#F97316); color:#fff; font-weight:700; padding:11px 20px; border-radius:12px; text-decoration:none; font-size:15.5px; border:none; cursor:pointer; }
+  .btn.dark { background:#26262b; }
+  main { max-width:1020px; margin:0 auto; padding:0 22px 48px; }
+  .hero { text-align:center; padding:52px 10px 34px; }
+  .hero h1 { font-size:42px; line-height:1.15; margin:0 0 12px; }
+  .hero p.lede { font-size:19px; color:#55555e; max-width:640px; margin:0 auto 26px; line-height:1.5; }
+  .postbox { display:flex; gap:10px; max-width:620px; margin:0 auto; flex-wrap:wrap; justify-content:center; }
+  .postbox select { flex:1 1 260px; padding:13px 14px; font-size:16px; border:2px solid #f0d9b5; border-radius:12px; background:#fff; color:#26262b; }
+  .badges { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:22px; }
+  .badge { background:#fff4e0; color:#92600a; border:1px solid #f3ddba; padding:6px 12px; border-radius:999px; font-size:13.5px; font-weight:600; }
+  h2 { font-size:26px; margin:44px 0 6px; }
+  .sub { color:#55555e; margin:0 0 18px; }
+  .tiles { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; }
+  .tile { background:#fff; border:1.5px solid #f3e3cd; border-radius:14px; padding:16px 14px; font-weight:700; font-size:15.5px; cursor:pointer; text-align:left; color:#26262b; }
+  .tile:hover { border-color:#F97316; background:#fff8ec; }
+  .tile small { display:block; font-weight:500; color:#8a8a93; font-size:12.5px; margin-top:3px; }
+  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; }
+  .step { background:#fff; border:1px solid #f3e3cd; border-radius:14px; padding:16px; line-height:1.5; font-size:15px; }
+  .step .n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#FFB020,#F97316); color:#fff; font-weight:800; align-items:center; justify-content:center; margin-bottom:8px; }
   .step b { display:block; margin-bottom:4px; }
-  .chips { display:flex; flex-wrap:wrap; gap:8px; }
-  .chip { background:#fff4e2; border:1px solid #f0d9ae; color:#7c4a03; border-radius:999px; padding:7px 13px; font-size:14px; font-weight:600; }
-  .promise { display:flex; gap:20px; align-items:center; background:#fff7eb; border-radius:18px; padding:22px; margin-top:14px; flex-wrap:wrap; }
-  .promise img { width:132px; height:132px; }
-  .promise ul { margin:6px 0 0; padding-left:18px; }
-  .cols { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; }
-  .card { background:#fff; border:1px solid #f3e3cd; border-radius:14px; padding:16px 18px; }
-  .card h3 { margin:2px 0 8px; color:#b25e09; font-size:16px; }
-  footer.site { border-top:1px solid #f3e3cd; padding:22px 24px; text-align:center; color:#8a8a93; font-size:13.5px; background:#fff; margin-top:36px; }
+  .promise { display:flex; gap:22px; align-items:flex-start; background:#fff; border:1px solid #f3e3cd; border-radius:16px; padding:22px; flex-wrap:wrap; }
+  .promise img { width:170px; height:170px; }
+  .promise ul { margin:6px 0 10px; padding-left:20px; line-height:1.75; }
+  .promise small { color:#8a8a93; line-height:1.5; display:block; }
+  .cols { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; }
+  .card { background:#fff; border:1px solid #f3e3cd; border-radius:16px; padding:20px; line-height:1.65; }
+  .card h3 { margin:0 0 8px; font-size:14px; letter-spacing:1.2px; color:#b25e09; }
+  .card ul { margin:8px 0 14px; padding-left:20px; }
+  .getapp { text-align:center; background:linear-gradient(135deg,#fff4e0,#ffe8d1); border:1px solid #f3ddba; border-radius:18px; padding:34px 22px; margin-top:46px; }
+  .getapp h2 { margin-top:0; }
+  .stores { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:16px 0 6px; }
+  .store { background:#26262b; color:#fff; border-radius:12px; padding:10px 18px; font-weight:700; font-size:15px; }
+  .store small { display:block; font-weight:500; font-size:11.5px; color:#c9c9d1; letter-spacing:.6px; }
+  footer.site { border-top:1px solid #f3e3cd; padding:22px 24px; text-align:center; color:#8a8a93; font-size:13.5px; background:#fff; line-height:1.7; }
   footer.site a { color:#b25e09; text-decoration:none; font-weight:600; }
-  a { color:#d97316; }
+  @media (max-width:560px){ .hero h1 { font-size:32px; } header.site nav a.hidenav { display:none; } }
 </style></head><body>
 <header class="site">
   <img class="logo" src="icon.png" alt="Duntidae logo">
   <span class="brand">Duntidae</span>
-  <nav><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="mailto:support@duntidae.com">Contact</a></nav>
+  <nav>
+    <a class="hidenav" href="#how">How it works</a>
+    <a class="hidenav" href="#categories">Categories</a>
+    <a class="hidenav" href="#technicians">For Technicians</a>
+    <a class="btn" href="#getapp" style="padding:9px 16px;">Get the App</a>
+  </nav>
 </header>
-
-<section class="hero">
-  <h1>Need it done? Done today.</h1>
-  <p>Duntidae is the same-day gig marketplace. Post a job, a verified technician accepts it, and your payment is held in escrow until the work is signed off.</p>
-  <div class="strip">
-    <span class="badge">🔒 Escrow-held payment</span>
-    <span class="badge">✓ Verified technicians</span>
-    <span class="badge">📷 Before &amp; after proof photos</span>
-    <span class="badge">↩ 15-day return cover</span>
-  </div>
-</section>
-
 <main>
-  <h2>How it works</h2>
-  <div class="steps">
-    <div class="step"><span class="n">1</span><b>Post it</b>Describe the job, pick a category, set your price and location.</div>
-    <div class="step"><span class="n">2</span><b>Pay into escrow</b>You fund the job up front; the money is held safely by Stripe — never handed over early.</div>
-    <div class="step"><span class="n">3</span><b>A technician accepts</b>They see the distance and area first; your full address is shared only after they accept, and they must arrive within 4 hours.</div>
-    <div class="step"><span class="n">4</span><b>Sign off, they get paid</b>When the work is done and you sign off, the technician is paid. Nobody works on a promise. Nobody pays on a promise.</div>
-  </div>
+  <section class="hero">
+    <h1>Same-day help, done today.</h1>
+    <p class="lede">Post a job, a verified technician accepts it, and your payment is held securely until you sign off the finished work. One flat $8.99 fee for posters — no surprises.</p>
+    <form class="postbox" onsubmit="return goPost(event)">
+      <select id="heroCategory" aria-label="What do you need done?">
+        <option value="">What do you need done?</option>
+      </select>
+      <button class="btn" type="submit">Post a Job →</button>
+    </form>
+    <div class="badges">
+      <span class="badge">🔒 Payment held securely</span>
+      <span class="badge">🪪 Verified technicians</span>
+      <span class="badge">🛡️ 15-day return cover</span>
+      <span class="badge">💵 One flat $8.99 fee</span>
+    </div>
+  </section>
 
-  <h2>What can get done today</h2>
-  <div class="chips">
-        <span class="chip">Custom Request</span>
-        <span class="chip">Emergency Locksmith</span>
-        <span class="chip">Emergency Plumbing</span>
-        <span class="chip">Errands &amp; Shopping</span>
-        <span class="chip">Furniture Assembly</span>
-        <span class="chip">General Handyman</span>
-        <span class="chip">Grocery Drop-off</span>
-        <span class="chip">House Cleaning</span>
-        <span class="chip">Laundry Pick &amp; Drop</span>
-        <span class="chip">Moving Help</span>
-        <span class="chip">Painting</span>
-        <span class="chip">Pet Care</span>
-        <span class="chip">Snow Removal</span>
-        <span class="chip">TV Mounting</span>
-        <span class="chip">Yard Work &amp; Lawn</span>
+  <h2 id="categories">Popular jobs</h2>
+  <p class="sub">Tap a job to get started — you'll be first to know when the app opens.</p>
+  <div class="tiles" id="tiles"></div>
+
+  <h2 id="how">How it works</h2>
+  <div class="steps">
+    <div class="step"><span class="n">1</span><b>Post the job</b>Describe the work and set your price. Your exact address stays hidden until a technician accepts.</div>
+    <div class="step"><span class="n">2</span><b>Pay — held securely</b>You fund the job up front; Stripe holds the money and it's only released when you sign off — never handed over early.</div>
+    <div class="step"><span class="n">3</span><b>A technician accepts</b>Verified, licence-checked technicians nearby accept and arrive within 4 hours, with before &amp; after proof photos.</div>
+    <div class="step"><span class="n">4</span><b>Sign off, covered 15 days</b>Approve the finished work to release payment. Something wrong within 15 days? The technician returns and fixes it free.</div>
   </div>
-  <p>Something else entirely? That's what <b>Custom Request</b> is for.</p>
 
   <h2>The Duntidae Promise</h2>
   <div class="promise">
     <img src="seal.png" alt="The Duntidae Promise seal — 15-day return cover">
     <div>
       <ul>
-        <li><b>Escrow-protected payments</b> — money is held until the work is signed off.</li>
-        <li><b>Verified technicians</b> — identity and licence verification before accepting jobs.</li>
-        <li><b>15-day return cover</b> — report an issue within 15 days of completion and we make it right.</li>
-        <li><b>One flat fee</b> — $8.99 per job. No hidden platform percentage on the job amount.</li>
+        <li><b>Payments held securely</b> — money is only released when the work is signed off.</li>
+        <li><b>Verified technicians</b> — identity and licence documents checked before accepting jobs.</li>
+        <li><b>15-day return cover</b> — report an issue within 15 days of completion and the technician returns to fix it free.</li>
+        <li><b>Full refund if nobody accepts</b> — if your job expires or you cancel before a technician accepts, every cent comes back, $8.99 fee included.</li>
+        <li><b>One flat fee for posters</b> — $8.99 per job, and no percentage is ever added to what a poster pays.</li>
       </ul>
+      <small>Verification covers identity and licence documents. Technicians are independent providers, responsible for the licences and insurance their trade and location require.</small>
     </div>
   </div>
 
-  <h2>Protected on both sides</h2>
+  <h2 id="technicians">Two ways to use Duntidae</h2>
   <div class="cols">
-    <div class="card"><h3>FOR POSTERS</h3>
-      Payment stays in escrow until you sign off · Your home address is hidden until a technician accepts · Before &amp; after proof photos on every job · 15-day return cover.</div>
-    <div class="card"><h3>FOR TECHNICIANS</h3>
-      Every job is funded in escrow before you can accept it · Real, confirmed job address · No percentage cut from your pay · Instant payout on jobs under $500 at sign-off.</div>
+    <div class="card"><h3>NEED IT DONE?</h3>
+      Posters get same-day help with payment protection on every job.
+      <ul>
+        <li>Payment stays held until you sign off</li>
+        <li>Your home address is hidden until a technician accepts</li>
+        <li>Before &amp; after proof photos on every job</li>
+        <li>15-day return cover on completed work</li>
+      </ul>
+      <a class="btn" href="#getapp" onclick="setRole('poster')">Post a Job →</a>
+    </div>
+    <div class="card"><h3>WANT THE WORK?</h3>
+      Fair, transparent pricing for technicians — one service charge, published up front.
+      <ul>
+        <li>Every job is funded and held before you can accept it</li>
+        <li>Real, confirmed job address after you accept</li>
+        <li>One 12% service charge on the job amount only — it never touches your 75% share of an emergency surcharge</li>
+        <li>Instant payout on jobs under $500 at sign-off</li>
+      </ul>
+      <a class="btn dark" href="#getapp" onclick="setRole('technician')">Become a Technician →</a>
+    </div>
   </div>
+
+  <section class="getapp" id="getapp">
+    <h2 id="getappTitle">The app is almost here</h2>
+    <p class="sub" id="getappText" style="max-width:520px;margin:0 auto;">Duntidae launches soon on iPhone and Android. Join the launch list and we'll email you the moment it's live.</p>
+    <div class="stores">
+      <span class="store"><small>COMING SOON ON</small> App Store</span>
+      <span class="store"><small>COMING SOON ON</small> Google Play</span>
+    </div>
+    <p style="margin-top:18px;"><a class="btn" id="notifyBtn" href="mailto:support@duntidae.com?subject=Duntidae%20launch%20list&body=Please%20email%20me%20when%20Duntidae%20launches.">Join the launch list</a></p>
+    <p><small>One email at launch. No spam, ever.</small></p>
+  </section>
 
   <h2>Contact</h2>
   <p>Questions? Email <a href="mailto:support@duntidae.com">support@duntidae.com</a>.</p>
 </main>
-
 <footer class="site">
-  <p>The Duntidae Promise — escrow-held payment, verified technicians, 15-day return cover.<br>
+  <p>The Duntidae Promise — payment held securely, verified technicians, 15-day return cover.<br>
   <a href="mailto:support@duntidae.com">support@duntidae.com</a> · <a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></p>
 </footer>
+<script>
+  var CATEGORIES = ["Custom Request","Emergency Locksmith","Emergency Plumbing","Errands & Shopping","Furniture Assembly","General Handyman","Grocery Drop-off","House Cleaning","Laundry Pick & Drop","Moving Help","Painting","Pet Care","Snow Removal","TV Mounting","Yard Work & Lawn"];
+  var chosen = { category: "", role: "poster" };
+  var sel = document.getElementById('heroCategory');
+  var tiles = document.getElementById('tiles');
+  CATEGORIES.forEach(function (c) {
+    var o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o);
+    var b = document.createElement('button'); b.className = 'tile'; b.type = 'button';
+    b.innerHTML = c + '<small>Same-day · in the app</small>';
+    b.onclick = function () { pickCategory(c); };
+    tiles.appendChild(b);
+  });
+  function pickCategory(c) {
+    chosen.category = c; sel.value = c; refresh(); document.getElementById('getapp').scrollIntoView({ behavior: 'smooth' });
+  }
+  function setRole(r) { chosen.role = r; refresh(); }
+  function goPost(e) { e.preventDefault(); chosen.category = sel.value; refresh(); document.getElementById('getapp').scrollIntoView({ behavior: 'smooth' }); return false; }
+  function refresh() {
+    var title = document.getElementById('getappTitle');
+    var text = document.getElementById('getappText');
+    var btn = document.getElementById('notifyBtn');
+    var subject, body;
+    if (chosen.role === 'technician') {
+      title.textContent = 'Technicians: be first in line';
+      text.textContent = 'Duntidae launches soon on iPhone and Android. Join the launch list and we\u2019ll email you the moment technician sign-up opens.';
+      subject = 'Duntidae launch list — Technician';
+      body = 'Please email me when Duntidae technician sign-up opens.';
+    } else if (chosen.category) {
+      title.textContent = 'First job: ' + chosen.category;
+      text.textContent = 'Duntidae launches soon on iPhone and Android. Join the launch list and we\u2019ll email you the moment you can post your ' + chosen.category + ' job.';
+      subject = 'Duntidae launch list — ' + chosen.category;
+      body = 'Please email me when Duntidae launches. My first job: ' + chosen.category + '.';
+    } else {
+      title.textContent = 'The app is almost here';
+      text.textContent = 'Duntidae launches soon on iPhone and Android. Join the launch list and we\u2019ll email you the moment it\u2019s live.';
+      subject = 'Duntidae launch list';
+      body = 'Please email me when Duntidae launches.';
+    }
+    btn.href = 'mailto:support@duntidae.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
+</script>
 </body></html>
