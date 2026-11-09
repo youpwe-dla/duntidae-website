@@ -70,6 +70,7 @@
   <section class="hero">
     <h1>Same-day help, done today.</h1>
     <p class="lede">Post a job, a verified technician accepts it, and your payment is held securely until you sign off the finished work. One flat $8.99 fee for posters — no surprises.</p>
+    <p style="font-weight:700;margin:2px 0 16px;">📍 Launching first in the Dallas–Fort Worth Metro</p>
     <form class="postbox" onsubmit="return goPost(event)">
       <select id="heroCategory" aria-label="What do you need done?">
         <option value="">What do you need done?</option>
@@ -78,13 +79,13 @@
     </form>
     <div class="badges">
       <span class="badge">🔒 Payment held securely</span>
-      <span class="badge">🪪 Verified technicians</span>
+      <span class="badge">✅ Verified technicians</span>
       <span class="badge">🛡️ 15-day return cover</span>
       <span class="badge">💵 One flat $8.99 fee</span>
     </div>
   </section>
 
-  <h2 id="categories">Popular request</h2>
+  <h2 id="categories">Popular requests</h2>
   <p class="sub">Tap a job to get started — you'll be first to know when the app opens.</p>
   <div class="jobtabs" id="jobtabs"></div>
   <div id="jobGroups"></div>
@@ -94,7 +95,7 @@
   <div class="steps">
     <div class="step"><span class="n">1</span><b>Post the job</b>Describe the work and set your price. Your exact address stays hidden until a technician accepts.</div>
     <div class="step"><span class="n">2</span><b>Pay — held securely</b>You fund the job up front; Stripe holds the money and it's only released when you sign off — never handed over early.</div>
-    <div class="step"><span class="n">3</span><b>A technician accepts</b>Verified, licence-checked technicians nearby accept and arrive within 4 hours, with before &amp; after proof photos.</div>
+    <div class="step"><span class="n">3</span><b>A technician accepts</b>Verified, license-checked technicians nearby accept and arrive within 4 hours, with before &amp; after proof photos.</div>
     <div class="step"><span class="n">4</span><b>Sign off, covered 15 days</b>Approve the finished work to release payment. Something wrong within 15 days? The technician returns and fixes it free.</div>
   </div>
 
@@ -104,12 +105,12 @@
     <div>
       <ul>
         <li><b>Payments held securely</b> — money is only released when the work is signed off.</li>
-        <li><b>Verified technicians</b> — identity and licence documents checked before accepting jobs.</li>
+        <li><b>Verified technicians</b> — identity and license documents checked before accepting jobs.</li>
         <li><b>15-day return cover</b> — report an issue within 15 days of completion and the technician returns to fix it free.</li>
         <li><b>Full refund if nobody accepts</b> — if your job expires or you cancel before a technician accepts, every cent comes back, $8.99 fee included.</li>
-        <li><b>One flat fee for posters</b> — $8.99 per job, and no percentage is ever added to what a poster pays.</li>
+        <li><b>One flat fee for posters</b> — $8.99 per job, and no percentage is ever added to what a poster pays. In a rush? You can add an optional emergency surcharge — you set the amount, and it's always shown before you pay.</li>
       </ul>
-      <small>Verification covers identity and licence documents. Technicians are independent providers, responsible for the licences and insurance their trade and location require.</small>
+      <small>Verification covers identity and license documents. Technicians are independent providers, responsible for the licenses and insurance their trade and location require.</small>
     </div>
   </div>
 
@@ -139,7 +140,7 @@
 
   <section class="getapp" id="getapp">
     <h2 id="getappTitle">The app is almost here</h2>
-    <p class="sub" id="getappText" style="max-width:520px;margin:0 auto;">Duntidae launches soon on iPhone and Android. Join the launch list and we'll email you the moment it's live.</p>
+    <p class="sub" id="getappText" style="max-width:520px;margin:0 auto;">Duntidae launches soon on iPhone and Android — starting in the Dallas–Fort Worth Metro. Join the launch list and we'll email you the moment it's live.</p>
     <div class="stores">
       <span class="store"><small>COMING SOON ON</small> App Store</span>
       <span class="store"><small>COMING SOON ON</small> Google Play</span>
@@ -243,7 +244,7 @@
       body = 'Please email me when Duntidae launches. My first job: ' + chosen.category + '.';
     } else {
       title.textContent = 'The app is almost here';
-      text.textContent = 'Duntidae launches soon on iPhone and Android. Join the launch list and we\u2019ll email you the moment it\u2019s live.';
+      text.textContent = 'Duntidae launches soon on iPhone and Android — starting in the Dallas–Fort Worth Metro. Join the launch list and we\u2019ll email you the moment it\u2019s live.';
       subject = 'Duntidae launch list';
       body = 'Please email me when Duntidae launches.';
     }
