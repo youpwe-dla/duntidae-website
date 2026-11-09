@@ -30,12 +30,14 @@
   .tile { background:#fff; border:1.5px solid #f3e3cd; border-radius:14px; padding:16px 14px; font-weight:700; font-size:15.5px; cursor:pointer; text-align:left; color:#26262b; }
   .tile:hover { border-color:#F97316; background:#fff8ec; }
   .tile small { display:block; font-weight:500; color:#8a8a93; font-size:12.5px; margin-top:3px; }
-  .jobtabs { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 16px; }
-  .jobtab { border:1.5px solid #f3e3cd; background:#fff; color:#26262b; border-radius:999px; padding:9px 16px; font-weight:700; font-size:14.5px; cursor:pointer; }
+  .jobtabs { display:flex; flex-wrap:nowrap; gap:8px; margin:14px 0 0; overflow-x:auto; padding-bottom:8px; }
+  .jobtab { border:1.5px solid #f3e3cd; background:#fff; color:#26262b; border-radius:999px; padding:8px 13px; font-weight:700; font-size:13.5px; cursor:pointer; white-space:nowrap; flex:0 0 auto; }
   .jobtab.active { background:linear-gradient(135deg,#FFB020,#F97316); border-color:#F97316; color:#fff; }
-  .pills { display:flex; flex-wrap:wrap; gap:9px; }
-  .pill { border:1.5px solid #e6e0d5; background:#fff; color:#26262b; border-radius:999px; padding:10px 16px; font-weight:600; font-size:14.5px; cursor:pointer; text-align:left; }
-  .pill:hover { border-color:#F97316; background:#fff8ec; }
+  .jobpanel { border:1.5px solid #f3e3cd; border-radius:14px; background:#fff; overflow:hidden; margin:6px 0 16px; }
+  .jobrow { display:flex; justify-content:space-between; align-items:center; width:100%; border:none; border-bottom:1px solid #f3e3cd; background:#fff; color:#26262b; padding:12px 16px; font-weight:600; font-size:14.5px; cursor:pointer; text-align:left; }
+  .jobrow:last-child { border-bottom:none; }
+  .jobrow:hover { background:#fff8ec; }
+  .jobrow::after { content:'›'; color:#b25e09; font-weight:700; }
   .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; }
   .step { background:#fff; border:1px solid #f3e3cd; border-radius:14px; padding:16px; line-height:1.5; font-size:15px; }
   .step .n { display:inline-flex; width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#FFB020,#F97316); color:#fff; font-weight:800; align-items:center; justify-content:center; margin-bottom:8px; }
@@ -85,11 +87,10 @@
     </div>
   </section>
 
-  <h2 id="categories">Popular requests</h2>
+  <h2 id="categories">Services</h2>
   <p class="sub">Tap a job to get started — you'll be first to know when the app opens.</p>
   <div class="jobtabs" id="jobtabs"></div>
   <div id="jobGroups"></div>
-  <div class="tiles" id="tiles" style="display:none;"></div>
 
   <h2 id="how">How it works</h2>
   <div class="steps">
@@ -157,59 +158,55 @@
   <a href="mailto:support@duntidae.com">support@duntidae.com</a> · <a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a></p>
 </footer>
 <script>
-  var APP_CATEGORIES = ["Custom Request","Emergency Locksmith","Emergency Plumbing","Errands & Shopping","Furniture Assembly","General Handyman","Grocery Drop-off","House Cleaning","Laundry Pick & Drop","Moving Help","Painting","Pet Care","Snow Removal","TV Mounting","Yard Work & Lawn"];
-  // Popular jobs, grouped the way posters browse them (Candella, 2026-11-06).
-  var POPULAR_GROUPS = {
-    "Assembly": ["General Furniture Assembly","Desk Assembly","Patio Furniture Disassembly"],
-    "Mounting": ["General Mounting","TV Mounting","Install Blinds & Window Treatments","Outdoor Light Installation","Other Mounting"],
-    "Moving": ["Help Moving","Flat-Rate Move","Heavy Lifting & Loading","Trash & Furniture Removal","Junk Haul Away","Patio Furniture Removal & Storage","Yard Waste Haul Away","Ride"],
-    "Home Repairs": ["Door, Cabinet, & Furniture Repair","Wall Repair","Sealing & Caulking","Window & Blinds Repair","Electrical Help","Plumbing Help","Light Carpentry"],
-    "Outdoor Help": ["Gutter & Roof Cleaning","Leaf Raking & Removal"]
+  // Service catalogue, grouped the way posters browse it (Candella's
+  // rework, 2026-11-08). Website only for now — the app's categories are
+  // unchanged. Custom Request stays pinned at the top of the dropdown.
+  var SERVICE_GROUPS = {
+    "Assembly": ["Furniture Assembly","Desk & Office Chair Assembly","Bed Frame & Crib Assembly","Exercise Equipment Assembly","Patio Furniture Assembly / Disassembly","Kids' Playset & Trampoline Assembly"],
+    "Mounting & Installation": ["TV Mounting","Shelves & Floating Shelves","Art, Mirrors & Picture Hanging","Curtain Rods, Blinds & Window Treatments","Smart Home Setup","Other Mounting","Car Dash Cam Installation"],
+    "Moving & Hauling": ["Moving Help","Flat-Rate Small Move","Heavy Lifting & Loading","Furniture Rearranging","Junk & Furniture Removal","Donation Drop-off"],
+    "Home Repairs": ["General Handyman","Door, Cabinet & Furniture Repair","Drywall & Wall Patching","Sealing & Caulking","Light Carpentry","Window & Blinds Repair","Interior Painting"],
+    "Licensed Pros": ["Light Fixture & Ceiling Fan Install","Outdoor Light Installation","Faucet, Toilet & Drain Fixes","Emergency Plumbing","Emergency Locksmith / Lockout","Heater Furnace Repair","Thermostat Repair","AC Repair"],
+    "Outdoor & Yard": ["Lawn Mowing & Edging","Yard Work & Weeding","Leaf Raking & Yard Waste Haul Away","Gutter Cleaning","Pressure Washing","Storm Cleanup","Snow & Ice Removal"],
+    "Cleaning": ["House Cleaning","Move-In / Move-Out Cleaning","Deep Cleaning","Garage & Closet Organization","Post-Party Cleanup","Tankless Water Heater Flush & Descale"],
+    "Errands & Personal Help": ["Grocery Pickup & Drop-off","Errands & Shopping","Laundry Pickup & Drop-off","Package Returns & Shipping","Pet Care","Waiting Service"]
   };
   var chosen = { category: "", role: "poster" };
   var sel = document.getElementById('heroCategory');
-  var tiles = document.getElementById('tiles');
-  // Post-a-Job dropdown: Custom Request first (like the app), then every
-  // service — app categories + popular jobs — in alphabetical order.
-  var allJobs = APP_CATEGORIES.filter(function (c) { return c !== 'Custom Request'; });
-  Object.keys(POPULAR_GROUPS).forEach(function (g) {
-    POPULAR_GROUPS[g].forEach(function (j) { if (allJobs.indexOf(j) === -1) allJobs.push(j); });
-  });
-  allJobs.sort();
+  // Post-a-Job dropdown: Custom Request first (as in the app), then the
+  // services grouped under their group headings.
   var customOpt = document.createElement('option'); customOpt.value = 'Custom Request'; customOpt.textContent = 'Custom Request'; customOpt.className = 'custom-opt'; sel.appendChild(customOpt);
-  allJobs.forEach(function (c) {
-    var o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o);
+  Object.keys(SERVICE_GROUPS).forEach(function (g) {
+    var og = document.createElement('optgroup'); og.label = g;
+    SERVICE_GROUPS[g].forEach(function (j) {
+      var o = document.createElement('option'); o.value = j; o.textContent = j; og.appendChild(o);
+    });
+    sel.appendChild(og);
   });
-  // Popular-jobs tabs: one group at a time, plus All services (the app's
-  // own categories, shown as the original tiles).
+  // Category tabs in a single row; hovering or clicking a tab opens its
+  // dropdown panel, with the group's jobs listed A–Z as rows.
   var jobtabs = document.getElementById('jobtabs');
   var jobGroups = document.getElementById('jobGroups');
-  var groupNames = Object.keys(POPULAR_GROUPS).concat(['Client Solutions']);
+  var groupNames = Object.keys(SERVICE_GROUPS);
   var groupDivs = {};
   groupNames.forEach(function (g, gi) {
     var tab = document.createElement('button'); tab.className = 'jobtab' + (gi === 0 ? ' active' : ''); tab.type = 'button'; tab.textContent = g;
     tab.onclick = function () { showGroup(g); };
+    tab.onmouseenter = function () { showGroup(g); };
     jobtabs.appendChild(tab);
-    var div = document.createElement('div'); div.className = 'pills'; div.style.display = gi === 0 ? 'flex' : 'none';
-    (POPULAR_GROUPS[g] || []).forEach(function (j) {
-      var p = document.createElement('button'); p.className = 'pill'; p.type = 'button'; p.textContent = j;
+    var div = document.createElement('div'); div.className = 'jobpanel'; div.style.display = gi === 0 ? 'block' : 'none';
+    (SERVICE_GROUPS[g] || []).slice().sort().forEach(function (j) {
+      var p = document.createElement('button'); p.className = 'jobrow'; p.type = 'button'; p.textContent = j;
       p.onclick = function () { pickCategory(j); };
       div.appendChild(p);
     });
     jobGroups.appendChild(div);
     groupDivs[g] = div;
   });
-  APP_CATEGORIES.forEach(function (c) {
-    var b = document.createElement('button'); b.className = 'tile'; b.type = 'button';
-    b.innerHTML = c + '<small>Same-day · in the app</small>';
-    b.onclick = function () { pickCategory(c); };
-    tiles.appendChild(b);
-  });
   function showGroup(g) {
     var tabs = jobtabs.children;
     for (var i = 0; i < tabs.length; i += 1) { tabs[i].className = 'jobtab' + (tabs[i].textContent === g ? ' active' : ''); }
-    groupNames.forEach(function (n) { groupDivs[n].style.display = n === g ? 'flex' : 'none'; });
-    tiles.style.display = g === 'Client Solutions' ? 'grid' : 'none';
+    groupNames.forEach(function (n) { groupDivs[n].style.display = n === g ? 'block' : 'none'; });
   }
   function goHome(e) {
     // Already on the homepage: a plain link to index.html can reload and
